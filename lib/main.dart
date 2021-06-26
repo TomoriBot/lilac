@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:lilac/http_requests.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'models/http_models.dart';
 
@@ -70,13 +72,15 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
-          ImageIcon(AssetImage("images/lilac.png")),
-          Text(
-            widget.title,
-            style: TextStyle(fontFamily: "Coiny 2.0"),
-          )
-        ]),
+        title: Row(mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ImageIcon(AssetImage("images/lilac.png")),
+              Text(
+                widget.title,
+                style: TextStyle(fontFamily: "Coiny 2.0"),
+              )
+            ]),
         centerTitle: true,
       ),
       body: Center(
@@ -90,7 +94,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemBuilder: (BuildContext context, int index) {
                     return ListTile(
                         title: Text(data[index].title),
-                        subtitle: Text(data[index].description),
+                        subtitle: Linkify(
+                            onOpen: _onOpen,
+                            // overflow: TextOverflow.fade,
+                            textScaleFactor: 0.95,
+                            text: data[index].description),
                         leading: Container(
                           width: 80.0,
                           height: 80.0,
@@ -101,9 +109,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               imageUrl: data[index].iconUrl,
                               progressIndicatorBuilder:
                                   (context, url, downloadProgress) =>
-                                      CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                          value: downloadProgress.progress),
+                                  CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      value: downloadProgress.progress),
                               errorWidget: (context, url, error) =>
                                   Icon(Icons.error_outline_rounded)),
                         ));
@@ -117,5 +125,13 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  Future<void> _onOpen(LinkableElement link) async {
+    if (await canLaunch(link.url)) {
+      await launch(link.url);
+    } else {
+      throw 'Could not launch $link';
+    }
   }
 }
