@@ -1,7 +1,7 @@
+import 'package:Lilac/http_requests.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:lilac/http_requests.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'models/http_models.dart';
@@ -72,7 +72,8 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Row(mainAxisAlignment: MainAxisAlignment.center,
+        title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               ImageIcon(AssetImage("images/lilac.png")),
@@ -97,23 +98,18 @@ class _MyHomePageState extends State<MyHomePage> {
                         subtitle: Linkify(
                             onOpen: _onOpen,
                             // overflow: TextOverflow.fade,
-                            textScaleFactor: 0.95,
+                            textScaleFactor: 0.92,
                             text: data[index].description),
                         leading: Container(
                           width: 80.0,
                           height: 80.0,
                           decoration: BoxDecoration(
-                            shape: BoxShape.circle,
+                            shape: BoxShape.rectangle,
                           ),
                           child: CachedNetworkImage(
                               imageUrl: data[index].iconUrl,
-                              progressIndicatorBuilder:
-                                  (context, url, downloadProgress) =>
-                                  CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      value: downloadProgress.progress),
                               errorWidget: (context, url, error) =>
-                                  Icon(Icons.error_outline_rounded)),
+                                  ImageIcon(AssetImage("images/news_back.png"))),
                         ));
                   });
             } else if (snapshot.hasError) {
