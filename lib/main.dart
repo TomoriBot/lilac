@@ -10,6 +10,8 @@ void main() {
   runApp(MyApp());
 }
 
+String clicked_icon_url = "-";
+
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
@@ -100,16 +102,25 @@ class _MyHomePageState extends State<MyHomePage> {
                             // overflow: TextOverflow.fade,
                             textScaleFactor: 0.92,
                             text: data[index].description),
-                        leading: Container(
-                          width: 80.0,
-                          height: 80.0,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
+                        leading: GestureDetector(
+                          child: Container(
+                            width: 80.0,
+                            height: 80.0,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                            ),
+                            child: CachedNetworkImage(
+                                imageUrl: data[index].iconUrl,
+                                errorWidget: (context, url, error) => ImageIcon(
+                                    AssetImage("images/news_back.png"))),
                           ),
-                          child: CachedNetworkImage(
-                              imageUrl: data[index].iconUrl,
-                              errorWidget: (context, url, error) =>
-                                  ImageIcon(AssetImage("images/news_back.png"))),
+                          onTap: () {
+                            clicked_icon_url = data[index].iconUrl;
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (_) {
+                              return DetailScreen();
+                            }));
+                          },
                         ));
                   });
             } else if (snapshot.hasError) {
@@ -129,5 +140,29 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       throw 'Could not launch $link';
     }
+  }
+}
+
+class DetailScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: GestureDetector(
+        child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.rectangle,
+          ),
+          alignment: Alignment.center,
+          child: CachedNetworkImage(
+              imageUrl: clicked_icon_url,
+              errorWidget: (context, url, error) =>
+                  ImageIcon(AssetImage("images/news_back.png"))),
+        ),
+        onTap: () {
+          clicked_icon_url = "-";
+          Navigator.pop(context);
+        },
+      ),
+    );
   }
 }
